@@ -12,21 +12,13 @@ def get_image_sequence_simple(scope, position_data, out_dir, lamp=None):
     lamp_dict = {'uv': 'dapi', 'red':'cy5'}
     scope.camera.live_mode=False
     # ~/device/acquisition_sequencer 
-    scope.camera.acquisition_sequencer.new_sequence()
+
     # This part is hard-coded, maybe it's ok. 
     #########################################
     # Current setting: TL: 10ms; Cy5:500ms at intensity=255,
     # Dapi : 10ms at intensity = 255. 
     # Major change of calling 
     #########################################
-    scope.camera.acquisition_sequencer.add_step(25,'TL', tl_intensity=255)
-    scope.camera.acquisition_sequencer.add_step(25,'UV')
-    scope.camera.acquisition_sequencer.add_step(500,'CY5')
-    # Add new lamp, there are only two lamps, Dapi and cy5. 
-    if lamp is not None: scope.camera.acquisition_sequencer.add_step(lamp[0],lamp[1])
-    # Deal with output directory. 
-    if not os.path.isdir(out_dir): os.mkdir(out_dir)
-    # Take images at given positions. 
     for pos_num, this_position_data in enumerate(position_data):
         # Why do we have to pass this location?
         scope.nosepiece.position = this_position_data[0]
@@ -35,6 +27,7 @@ def get_image_sequence_simple(scope, position_data, out_dir, lamp=None):
         my_images = scope.camera.acquisition_sequencer.run() 
         freeimage.write(my_images[0], out_dir+os.path.sep+'_{:03d}_bf.png'.format(pos_num))
         if lamp is not None: 
+            # Add UV image
             freeimage.write(my_images[1], out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp[1]]+'.png')
             # Here added the Cy5 image
             freeimage.write(my_images[2], out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp[2]]+'.png')  
@@ -105,3 +98,8 @@ def get_objpositions(scope):
 
 
 
+def group_position(positions):
+    '''
+    Grouping the sequence
+    '''
+    # Enumerate through the list to 
