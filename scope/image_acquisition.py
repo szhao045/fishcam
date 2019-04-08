@@ -87,14 +87,8 @@ def get_objpositions(scope):
                 new_position = position
                 new_position.insert(3,z)
                 new_positions.append(new_position)
-        else:
-            for z in z_stack:
-                new_position = position
-                new_position[3] = z
-                new_positions.append(new_position)
-                
     new_positions = sorted(new_positions)
-    return new_positions
+    return (positions, new_positions)
 
 
 
