@@ -1,64 +1,52 @@
 import os
 import freeimage
 import numpy as np
-def get_image_sequence_simple(scope, position_data, out_dir, lamp=None):
+def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
     '''
         lamp - List of the form (exposure time, lamp_name)
     '''
     # Different filter set 
     # New acquisition sequences
-    # On the wiki filter set
-    # Here double check the name of the filters
     lamp_dict = {'uv': 'dapi', 'red':'cy5'}
     scope.camera.live_mode=False
     # ~/device/acquisition_sequencer 
-
     # This part is hard-coded, maybe it's ok. 
+    # Unpack position_data into the two image and three image 
+    position_data = positions[1]
     #########################################
     # Current setting: TL: 10ms; Cy5:500ms at intensity=255,
     # Dapi : 10ms at intensity = 255. 
     # Major change of calling 
     #########################################
-    for pos_num, this_position_data in enumerate(position_data):
+    # Take pictures for the original spots
+    for this_position_data in position_data:
         # Why do we have to pass this location?
         scope.nosepiece.position = this_position_data[0]
         # x,y,z positions
         scope.stage.position = this_position_data[1:]
-        my_images = scope.camera.acquisition_sequencer.run() 
-        freeimage.write(my_images[0], out_dir+os.path.sep+'_{:03d}_bf.png'.format(pos_num))
+        my_images = scope.camera.acquisition_sequencer.run()
+        freeimage.write(my_images[0], out_dir+os.path.sep
+        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
+        + '_{:06d}_'.format(this_position_data[3])+'.png')
         if lamp is not None: 
             # Add UV image
-            freeimage.write(my_images[1], out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp[1]]+'.png')
+            freeimage.write(my_images[1], out_dir + os.path.sep
+        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
+        + '_{:06d}_'.format(this_position_data[3])+'.png')
             # Here added the Cy5 image
-            freeimage.write(my_images[2], out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp[2]]+'.png')  
-
-def get_image_sequence(scope, position_data, out_dir, lamp=None):
-    '''
-        lamp - List of lists of the form [[lamp_exposure1,lamp_name1],...]
-    '''
-    
-    #if lamp is None:
-        #lamp = [[2, 'TL']]
-    #if not any([arg[1] is 'TL' for arg in lamp]):
-        #lamp.append([2,'TL'])
-        
-    
-    lamp_dict = {'cyan':'gfp','green_yellow':'RedmChr'}
-    
-    scope.camera.live_mode=False
-    scope.camera.acquisition_sequencer.new_sequence()
-    for lamp_exposure, lamp_name in lamp:
-        if lamp_name is not 'TL': scope.camera.acquisition_sequencer.add_step(lamp_exposure, lamp_name)
-        else: scope.camera.acquisition_sequencer.add_step(lamp_exposure, lamp_name, tl_intensity=255)
-    if not os.path.isdir(out_dir): os.mkdir(out_dir)
-    for pos_num, this_position_data in enumerate(position_data):
+            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep
+        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
+        + '_{:06d}_'.format(this_position_data[3])+'.png') 
+    # Only saving the cy5 image
+    cy5_position = positions[2]
+    for this_position_data in cy5_position:
         scope.nosepiece.position = this_position_data[0]
-        scope.stage.position = this_position_data[1:]
-        my_images = scope.camera.acquisition_sequencer.run() 
-
-        for (lamp_exposure, lamp_name, this_image) in zip([arg[0] for arg in lamp],[arg[1] for arg in lamp], my_images):
-            if lamp_name is 'TL': freeimage.write(this_image, out_dir+os.path.sep+'_{:03d}_bf_{}_ms'.format(pos_num,lamp_exposure)+'.png')
-            else: freeimage.write(this_image, out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp_name]+'_{}_ms'.format(lamp_exposure)+'.png')
+        scope.stage.position = this_position_data[1]
+        my_images = scope.camera.acquisition_sequencer.run()
+        if lamp is not None:
+            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep
+        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
+        + '_{:06d}_'.format(this_position_data[3])+'.png') 
 
 def get_objpositions(scope):
     """Return a list of interactively-obtained scope stage positions."""
@@ -89,11 +77,3 @@ def get_objpositions(scope):
                 new_positions.append(new_position)
     new_positions = sorted(new_positions)
     return (positions, new_positions)
-
-
-
-def group_position(positions):
-    '''
-    Grouping the sequence
-    '''
-    # Enumerate through the list to 
