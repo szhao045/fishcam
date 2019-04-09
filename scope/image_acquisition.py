@@ -19,24 +19,19 @@ def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
     # Major change of calling 
     #########################################
     # Take pictures for the original spots
-    for this_position_data in position_data:
+    for pos_num, this_position_data in enumerate(position_data):
         # Why do we have to pass this location?
         scope.nosepiece.position = this_position_data[0]
         # x,y,z positions
         scope.stage.position = this_position_data[1:]
         my_images = scope.camera.acquisition_sequencer.run()
         freeimage.write(my_images[0], out_dir+os.path.sep
-        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
-        + '_{:06d}_'.format(this_position_data[3])+'.png')
+        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(pos_num)+'.png')
         if lamp is not None: 
             # Add UV image
-            freeimage.write(my_images[1], out_dir + os.path.sep
-        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
-        + '_{:06d}_'.format(this_position_data[3])+'.png')
+            freeimage.write(my_images[1], out_dir + os.path.sep + '_{:03d}_'.format(pos_num)+'.png')
             # Here added the Cy5 image
-            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep
-        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
-        + '_{:06d}_'.format(this_position_data[3])+'.png') 
+            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep + '_{:03d}_'.format(pos_num)+'.png')
     # Only saving the cy5 image
     cy5_position = positions[2]
     for this_position_data in cy5_position:
@@ -44,9 +39,7 @@ def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
         scope.stage.position = this_position_data[1]
         my_images = scope.camera.acquisition_sequencer.run()
         if lamp is not None:
-            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep
-        +'_{:03d}_'.format(this_position_data[1])+ '_{:03d}_'.format(this_position_data[2]) 
-        + '_{:06d}_'.format(this_position_data[3])+'.png') 
+            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep + '_{:03d}_'.format(pos_num)+'.png')
 
 def get_objpositions(scope):
     """Return a list of interactively-obtained scope stage positions."""
@@ -62,18 +55,33 @@ def get_objpositions(scope):
         # Calling the objective? 
         positions[-1].insert(0,scope.nosepiece.position)
         print('Position {}: {}'.format(len(positions), tuple(positions[-1])), end='')
+        # Using the first created positions 
         if len(positions) <= 2:
             z_min = positions[1][2]
             z_max = positions[2][2]
+    # Make sure max is bigger than min
+    if z_min > z_max:
+        z_min, z_max = z_max, z_min
     # Calculate all the z-stack coordinate.
     interval = (z_max - z_min)/10
+    # Does the digit work? 
     z_stack = range(z_min, z_max, step = interval)
     new_positions = []
-    for position in positions:
-        if len(position) != 4:
-            for z in z_stack:
-                new_position = position
-                new_position.insert(3,z)
-                new_positions.append(new_position)
-    new_positions = sorted(new_positions)
+    # Rewrite to have a new list of calculated z value
+    # CUT THE STUFF. 
+    for 
     return (positions, new_positions)
+
+    # Save out a file for matching numbers and images. 
+
+    '''
+    1. scope_gui
+    2. ipython
+    from schope import scope_clint; scope = scope_client.ScopeClient()
+    3. 
+    '''
+
+    '''
+    Ask Zach about the scope temperature, and if it is possible to set the temp. 
+    mataData File.
+    '''
