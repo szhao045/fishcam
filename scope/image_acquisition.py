@@ -57,31 +57,23 @@ def get_objpositions(scope):
         print('Position {}: {}'.format(len(positions), tuple(positions[-1])), end='')
         # Using the first created positions 
         if len(positions) <= 2:
-            z_min = positions[1][2]
-            z_max = positions[2][2]
+            # Check if the first two positions are at the same location and specify the max and mean
+            if [positions[0][1],positions[0][2]] is not positions[1][1]:
+                print('Must specify z_max and z_min using a given coordinate!')
+                break
+            z_min = positions[0][-1]
+            z_max = positions[1][-1]
+            print('The z value should be {}'.format((z_min+z_max)/2), end = '')
     # Make sure max is bigger than min
     if z_min > z_max:
         z_min, z_max = z_max, z_min
     # Calculate all the z-stack coordinate.
     interval = (z_max - z_min)/10
-    # Does the digit work? 
     z_stack = range(z_min, z_max, step = interval)
     new_positions = []
     # Rewrite to have a new list of calculated z value
-    # CUT THE STUFF. 
-    for 
+    for position in positions:
+
     return (positions, new_positions)
 
     # Save out a file for matching numbers and images. 
-
-    '''
-    1. scope_gui
-    2. ipython
-    from schope import scope_clint; scope = scope_client.ScopeClient()
-    3. 
-    '''
-
-    '''
-    Ask Zach about the scope temperature, and if it is possible to set the temp. 
-    mataData File.
-    '''
