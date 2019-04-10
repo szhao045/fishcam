@@ -12,6 +12,9 @@ def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
     # ~/device/acquisition_sequencer 
     # This part is hard-coded, maybe it's ok. 
     # Unpack position_data into the two image and three image 
+    #######################################################
+    
+    #######################################################
     position_data = positions[1]
     #########################################
     # Current setting: TL: 10ms; Cy5:500ms at intensity=255,
@@ -34,12 +37,12 @@ def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
             freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep + '_{:03d}_'.format(pos_num)+'.png')
     # Only saving the cy5 image
     cy5_position = positions[2]
-    for this_position_data in cy5_position:
+    for pos_num, this_position_data in enumerate(cy5_position):
         scope.nosepiece.position = this_position_data[0]
         scope.stage.position = this_position_data[1]
         my_images = scope.camera.acquisition_sequencer.run()
         if lamp is not None:
-            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep + '_{:03d}_'.format(pos_num)+'.png')
+            freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep + '_{:03d}_'.format(pos_num+ len(position_data))+'.png')
 
 def get_objpositions(scope):
     """Return a list of interactively-obtained scope stage positions."""
@@ -69,11 +72,16 @@ def get_objpositions(scope):
         z_min, z_max = z_max, z_min
     # Calculate all the z-stack coordinate.
     interval = (z_max - z_min)/10
-    z_stack = range(z_min, z_max, step = interval)
+    z_stack = np.arange(z_min, z_max, step = interval)
+    z_stack.remove((z_min+z_max)/2)
     new_positions = []
     # Rewrite to have a new list of calculated z value
     for position in positions:
+        for z_value in z_stack:
+            new_position = position[0:3].append(z_value)
+            new_positions.append(new_position)
 
+    # Return a json file storing the 
     return (positions, new_positions)
 
     # Save out a file for matching numbers and images. 
