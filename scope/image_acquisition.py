@@ -1,6 +1,7 @@
 import os
 import freeimage
 import numpy as np
+import pickle
 def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
     '''
         lamp - List of the form (exposure time, lamp_name)
@@ -13,9 +14,18 @@ def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
     # This part is hard-coded, maybe it's ok. 
     # Unpack position_data into the two image and three image 
     #######################################################
-    
+    # Dump the file name to a pickle file
     #######################################################
-    position_data = positions[1]
+    phone_book = {}
+    postion_num_total = positions[0]
+    for pos_num, this_position_data in enumerate(positions[0]):
+        phone_book[pos_num] = this_position_data
+    for pos_num, this_position_data in enumerate(positions[1]): 
+        phone_book[pos_num + postion_num_total] = this_position_data
+    with open('phonebook.pickle', 'wb') as handle:
+        pickle.dump(phone_book, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    #########################################
+    position_data = positions[0]
     #########################################
     # Current setting: TL: 10ms; Cy5:500ms at intensity=255,
     # Dapi : 10ms at intensity = 255. 
@@ -36,7 +46,7 @@ def get_image_sequence_simple(scope, positions, out_dir, lamp=None):
             # Here added the Cy5 image
             freeimage.write(my_images[2], out_dir+os.path.sep+os.path.sep + '_{:03d}_'.format(pos_num)+'.png')
     # Only saving the cy5 image
-    cy5_position = positions[2]
+    cy5_position = positions[1]
     for pos_num, this_position_data in enumerate(cy5_position):
         scope.nosepiece.position = this_position_data[0]
         scope.stage.position = this_position_data[1]
@@ -80,8 +90,4 @@ def get_objpositions(scope):
         for z_value in z_stack:
             new_position = position[0:3].append(z_value)
             new_positions.append(new_position)
-
-    # Return a json file storing the 
     return (positions, new_positions)
-
-    # Save out a file for matching numbers and images. 
