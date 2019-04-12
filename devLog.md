@@ -19,4 +19,8 @@
 4. Compare the relative region size identified for the matched cells.
     1. I don't want to but perhaps I have to relearn matlab.
 
-5. **Alternative**: overlay all the cells from the hand drawn 
+5. **Alternative**: overlay all the cells from the hand drawn data.
+
+## RajLabImageTool has so many bugsss....
+
+1. For some reasons, the basic functionalities broke for matlab2018b. I will try using the worked examples to troubleshoot. 
