@@ -69,9 +69,11 @@ def get_objpositions(scope):
         positions[-1].insert(0,scope.nosepiece.position)
         print('Position {}: {}'.format(len(positions), tuple(positions[-1])), end='')
         # Using the first created positions 
-        if len(positions) <= 2:
+        if len(positions) <= 2 && len(positions) > 1:
             # Check if the first two positions are at the same location and specify the max and mean
-            if [positions[0][1],positions[0][2]] is not positions[1][1]:
+            ### Major Bug ###
+            # A logic loop #
+            if  [positions[0][1],positions[0][2]] is not positions[1][1]:
                 print('Must specify z_max and z_min using a given coordinate!')
                 break
             z_min = positions[0][-1]
