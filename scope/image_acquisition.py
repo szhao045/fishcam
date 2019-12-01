@@ -65,7 +65,7 @@ def get_objpositions(scope):
             break
         
         positions.append(scope.stage.position)
-        # Calling the objective? 
+        # Calling the objective? This line of code is archaic, should be removed. 
         positions[-1].insert(0,scope.nosepiece.position)
         print('Position {}: {}'.format(len(positions), tuple(positions[-1])), end='')
         # Using the first created positions 
@@ -93,3 +93,21 @@ def get_objpositions(scope):
             new_position = position[0:3].append(z_value)
             new_positions.append(new_position)
     return (positions, new_positions)
+
+def get_new_positions(scope):
+    '''
+    scope is the instance of scope_client.ScopeClient()
+    '''
+    # First initiate a list to hold all the positions
+    positions=[]
+    # Hint for getting positions 
+    print('Press enter after each position has been found; press control-c to end')
+    # Positions
+    while True:
+        try:
+            input()
+        except KeyboardInterrupt:
+            break
+        #append the current position in the scope viewer. 
+        position.append(scope.stage.position)
+        
