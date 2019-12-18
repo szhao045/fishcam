@@ -65,13 +65,15 @@ def get_objpositions(scope):
             break
         
         positions.append(scope.stage.position)
-        # Calling the objective? 
+        # Calling the objective? This line of code is archaic, should be removed. 
         positions[-1].insert(0,scope.nosepiece.position)
         print('Position {}: {}'.format(len(positions), tuple(positions[-1])), end='')
         # Using the first created positions 
-        if len(positions) <= 2:
+        if len(positions) <= 2 && len(positions) > 1:
             # Check if the first two positions are at the same location and specify the max and mean
-            if [positions[0][1],positions[0][2]] is not positions[1][1]:
+            ### Major Bug ###
+            # A logic loop #
+            if  [positions[0][1],positions[0][2]] is not positions[1][1]:
                 print('Must specify z_max and z_min using a given coordinate!')
                 break
             z_min = positions[0][-1]
@@ -91,7 +93,7 @@ def get_objpositions(scope):
             new_position = position[0:3].append(z_value)
             new_positions.append(new_position)
     return (positions, new_positions)
-
+    
 def get_image_sequence_simple(scope, position_data, out_dir, lamp=None):
     '''
         lamp - List of the form (exposure time, lamp_name)
@@ -137,4 +139,5 @@ def get_image_sequence(scope, position_data, out_dir, lamp=None):
         for (lamp_exposure, lamp_name, this_image) in zip([arg[0] for arg in lamp],[arg[1] for arg in lamp], my_images):
             if lamp_name is 'TL': freeimage.write(this_image, out_dir+os.path.sep+'_{:03d}_bf_{}_ms'.format(pos_num,lamp_exposure)+'.png')
             else: freeimage.write(this_image, out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp_name]+'_{}_ms'.format(lamp_exposure)+'.png')
+
 
