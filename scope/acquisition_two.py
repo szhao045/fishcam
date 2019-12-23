@@ -81,16 +81,21 @@ def get_z_stack(positions, step):
     for a_position in positions:
         # Only get the z coordinate 
         z_position = a_position[-1]
-        xy_position = a_position[1:3]
+        print('what is z', z_position)
+        xy_position = a_position[0:3]
+        print('xy position is ,', xy_position)
         # Get the minimum and maximum z value for the z stack pictures
         min_z, max_z = [z_position - num_of_image/2*step, z_position + (num_of_image/2+ 1)*step]
         # create the z_step image. 
         z_stack = np.arange(min_z, max_z, step)
         # Remove the original z value.
-        new_z_stack = filter(lambda a: a != z_position, z_stack)
+        print('what is new z stack', z_stack)
         # Create extra coordinates for image-taking
-        complete_positions.append(a_position)
-        for z_value in new_z_stack:
-            new_position = xy_position.append(z_value)
-            complete_positions.append(new_position)
+        a_position_zvalues = []
+        for z_value in z_stack:
+            new_position = a_position[0:3] 
+            print('new_position', new_position)
+            new_position.append(z_value)
+            a_position_zvalues.append(new_position)
+        complete_positions.extend(a_position_zvalues)
     return complete_positions

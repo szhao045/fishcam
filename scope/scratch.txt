@@ -8,4 +8,9 @@
     # Take images at given positions. 
 
     scope.camera.acquisition_sequencer.new_sequence()
+    
+    # What's the maximum and minimum z values
+1.282411, 1.298925
+C
+therefore per step is 0.0016 on z  
 
