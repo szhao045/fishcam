@@ -39,7 +39,7 @@ def get_image_sequence(scope, positions, out_dir, lamp = None):
         scope.stage.position = this_position_data[1:]
         my_images = scope.camera.acquisition_sequencer.run()
         for (lamp_exposure, lamp_name, this_image) in zip([arg[0] for arg in lamp],[arg[1] for arg in lamp], my_images):
-            freeimage.write(this_image, out_dir+os.path.sep+'_{:03d}_'.format(pos_num)+lamp_dict[lamp_name]+'.png')
+            freeimage.write(this_image, out_dir+os.path.sep+'{:03d}_'.format(pos_num)+lamp_dict[lamp_name]+'.png')
 
 
 def get_objpositions(scope):
@@ -94,8 +94,8 @@ def get_z_stack(positions, step):
         a_position_zvalues = []
         for z_value in z_stack:
             new_position = a_position[0:3] 
-            print('new_position', new_position)
             new_position.append(z_value)
             a_position_zvalues.append(new_position)
+            print('new_position', new_position)
         complete_positions.extend(a_position_zvalues)
     return complete_positions

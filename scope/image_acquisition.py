@@ -69,7 +69,7 @@ def get_objpositions(scope):
         positions[-1].insert(0,scope.nosepiece.position)
         print('Position {}: {}'.format(len(positions), tuple(positions[-1])), end='')
         # Using the first created positions 
-        if len(positions) <= 2 && len(positions) > 1:
+        if len(positions) <= 2 and len(positions) > 1:
             # Check if the first two positions are at the same location and specify the max and mean
             ### Major Bug ###
             # A logic loop #
